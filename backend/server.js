@@ -14,7 +14,7 @@ const app = express();
  //Configuración del servidor
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));  
+app.use(express.static(path.join(__dirname, "..", "frontend")));   
 app.use("/api/auth", authRoutes); 
 app.use("/api/todos", todoRoutes); 
 
@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 3000;
 
 // Mostrar la aplicación principal
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "..", "frontend", "index.html")); 
 }); 
 // Comprobar la conexión con Supabase
 app.get("/api/conexion", async (req, res) => {
