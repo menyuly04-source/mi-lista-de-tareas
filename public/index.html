@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Lista de Tareas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- INICIO DE SESIÓN Y REGISTRO -->
+
+  <main id="auth-section" class="contenedor">
+
+    <section class="encabezado">
+      <h1>Mi Lista de Tareas</h1>
+      <p>Organizá tu trabajo de manera inteligente.</p>
+    </section>
+
+    <section class="tarjeta">
+
+      <div id="login-form">
+        <h2>Bienvenido</h2>
+        <h3>Iniciar sesión</h3>
+
+        <input type="email" id="login-email" placeholder="Correo electrónico">
+        <input type="password" id="login-password" placeholder="Contraseña">
+
+        <button id="login-button">Ingresar</button>
+
+        <p>¿No tenés cuenta?
+          <a href="#" id="show-register">Registrate</a>
+        </p>
+      </div>
+
+      <div id="register-form" class="oculto">
+        <h2>Crear cuenta</h2>
+
+        <input type="text" id="register-name" placeholder="Nombre completo">
+        <input type="email" id="register-email" placeholder="Correo electrónico">
+        <input type="password" id="register-password" placeholder="Contraseña">
+
+        <button id="register-button">Registrarme</button>
+
+        <p>¿Ya tenés cuenta?
+          <a href="#" id="show-login">Iniciar sesión</a>
+        </p>
+      </div>
+
+      <p id="auth-message"></p>
+
+    </section>
+  </main>
+
+
+  <!-- APLICACIÓN PRINCIPAL -->
+
+  <div id="app-section" class="app-layout oculto">
+
+    <!-- MENÚ LATERAL -->
+
+    <aside class="sidebar">
+
+      <div class="logo">
+        <span class="logo-icon">T</span>
+        <span>Mi Lista de Tareas</span>
+      </div>
+
+      <p class="menu-titulo">MENÚ PRINCIPAL</p>
+
+      <nav class="menu">
+
+        <button type="button" class="menu-link activo" data-page="inicio">
+          <span>▦</span> Inicio
+        </button>
+
+        <button type="button" class="menu-link" data-page="tareas">
+          <span>☑</span> Mis tareas
+        </button>
+
+        <button type="button" class="menu-link" data-page="estadisticas">
+          <span>▥</span> Estadísticas
+        </button>
+
+      </nav>
+
+      <div class="sidebar-inferior">
+
+        <p class="menu-titulo">PREFERENCIAS</p>
+
+        <button type="button" class="menu-link" data-page="configuracion">
+          <span>⚙</span> Configuración
+        </button>
+
+        <button type="button" id="logout-button" class="menu-link boton-salir">
+          <span>↪</span> Cerrar sesión
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+
+    <main class="contenido-principal">
+
+      <header class="barra-superior">
+        <div>
+          <p class="subtitulo">PANEL DE CONTROL</p>
+          <h1 id="titulo-pagina">Inicio</h1>
+        </div>
+
+        <div class="usuario">
+          <div class="avatar">U</div>
+          <span>Mi cuenta</span>
+        </div>
+      </header>
+
+
+      <!-- PANTALLA INICIO -->
+
+      <section class="pagina activa" id="pagina-inicio">
+
+        <div class="bienvenida">
+          <h2>¡Bienvenido a Mi Lista de Tareas!</h2>
+          <p>Este es el resumen de tu actividad.</p>
+        </div>
+
+        <div class="estadisticas-resumen">
+
+          <div class="resumen-card">
+            <p>Total de tareas</p>
+            <h2 id="total-tareas">0</h2>
+            <span>Todas tus actividades</span>
+          </div>
+
+          <div class="resumen-card">
+            <p>Pendientes</p>
+            <h2 id="total-pendientes">0</h2>
+            <span>Por completar</span>
+          </div>
+
+          <div class="resumen-card">
+            <p>Terminadas</p>
+            <h2 id="total-terminadas">0</h2>
+            <span>Trabajo realizado</span>
+          </div>
+
+        </div>
+
+        <div class="panel">
+          <h2>Actividad reciente</h2>
+          <div id="tareas-recientes">
+            Todavía no tenés tareas.
+          </div>
+        </div>
+
+      </section>
+
+
+      <!-- PANTALLA MIS TAREAS -->
+
+      <section class="pagina" id="pagina-tareas">
+
+        <div class="panel">
+
+          <h2>Administrar tareas</h2>
+          <p>Creá, organizá y controlá tus actividades.</p>
+
+          <form id="task-form">
+
+            <input
+              type="text"
+              id="task-title"
+              placeholder="¿Qué tenés que hacer?"
+              required
+            >
+
+            <textarea
+              id="task-description"
+              placeholder="Descripción de la tarea"
+            ></textarea>
+
+            <select id="task-priority">
+              <option value="low">Prioridad baja</option>
+              <option value="medium" selected>Prioridad media</option>
+              <option value="high">Prioridad alta</option>
+            </select>
+
+            <button type="submit">+ Agregar tarea</button>
+
+          </form>
+
+        </div>
+
+        <div class="panel">
+
+          <h2>Mis actividades</h2>
+
+          <div class="filtros">
+            <button type="button" id="filter-all">Todas</button>
+            <button type="button" id="filter-pending">Pendientes</button>
+            <button type="button" id="filter-completed">Terminadas</button>
+          </div>
+
+          <div id="task-list"></div>
+
+          <p id="task-message"></p>
+
+        </div>
+
+      </section>
+
+
+      <!-- PANTALLA ESTADÍSTICAS -->
+
+      <section class="pagina" id="pagina-estadisticas">
+
+        <div class="panel">
+          <h2>Estadísticas</h2>
+          <p>Conocé tu productividad y el avance de tus tareas.</p>
+
+          <div class="stats-grid">
+
+            <div class="stat-card">
+              <span>Total de tareas</span>
+              <h3 id="estadistica-total">0</h3>
+            </div>
+
+            <div class="stat-card">
+              <span>Terminadas</span>
+              <h3 id="estadistica-terminadas">0</h3>
+            </div>
+
+            <div class="stat-card">
+              <span>Pendientes</span>
+              <h3 id="estadistica-pendientes">0</h3>
+            </div>
+
+          </div>
+
+          <div class="progreso-panel">
+            <h3>Progreso general</h3>
+
+            <div class="progreso-barra">
+              <div id="barra-progreso" class="progreso-relleno"></div>
+            </div>
+
+            <p id="texto-progreso">0% completado</p>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      
+<!-- PANTALLA CONFIGURACIÓN -->
+
+<section class="pagina" id="pagina-configuracion">
+
+  <div class="panel">
+    <h2>Configuración</h2>
+    <p>Personalizá tu experiencia en Mi Lista de Tareas.</p>
+  </div>
+<div class="panel">
+  <h3>Mi perfil</h3>
+
+  <p>Correo electrónico de tu cuenta:</p>
+
+  <p id="perfil-email">Cargando correo...</p>
+
+  <p>Estado: Sesión iniciada</p>
+</div> 
+  <div class="panel">
+    <h3>Apariencia</h3>
+    <p>Elegí cómo querés visualizar la aplicación.</p>
+
+    <div class="opciones-tema">
+      <button type="button" id="tema-claro">
+        ☀️ Modo claro
+      </button>
+
+      <button type="button" id="tema-oscuro">
+        🌙 Modo oscuro
+      </button>
+    </div>
+
+    <p id="mensaje-tema">Tema actual: Claro</p>
+  </div>
+
+  <div class="panel">
+    <h3>Información</h3>
+    <p><strong>Aplicación:</strong> Mi Lista de Tareas</p>
+    <p><strong>Versión:</strong> 1.0</p>
+  </div>
+
+</section>
+
+</main>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
