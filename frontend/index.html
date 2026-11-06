@@ -109,6 +109,7 @@
     <main class="contenido-principal">
 
       <header class="barra-superior">
+
         <div>
           <p class="subtitulo">PANEL DE CONTROL</p>
           <h1 id="titulo-pagina">Inicio</h1>
@@ -118,6 +119,7 @@
           <div class="avatar">U</div>
           <span>Mi cuenta</span>
         </div>
+
       </header>
 
 
@@ -154,6 +156,7 @@
 
         <div class="panel">
           <h2>Actividad reciente</h2>
+
           <div id="tareas-recientes">
             Todavía no tenés tareas.
           </div>
@@ -186,10 +189,19 @@
             ></textarea>
 
             <select id="task-priority">
+
               <option value="low">Prioridad baja</option>
               <option value="medium" selected>Prioridad media</option>
               <option value="high">Prioridad alta</option>
+
             </select>
+
+            <label for="task-due-date">Fecha límite de la tarea:</label>
+
+            <input
+              type="date"
+              id="task-due-date"
+            >
 
             <button type="submit">+ Agregar tarea</button>
 
@@ -197,14 +209,25 @@
 
         </div>
 
+
         <div class="panel">
 
           <h2>Mis actividades</h2>
 
-          <div class="filtros">
-            <button type="button" id="filter-all">Todas</button>
-            <button type="button" id="filter-pending">Pendientes</button>
-            <button type="button" id="filter-completed">Terminadas</button>
+          <div class="filtros-tareas">
+
+            <button type="button" id="filter-all">
+              Todas
+            </button>
+
+            <button type="button" id="filter-pending">
+              Pendientes
+            </button>
+
+            <button type="button" id="filter-completed">
+              Terminadas
+            </button>
+
           </div>
 
           <div id="task-list"></div>
@@ -221,6 +244,7 @@
       <section class="pagina" id="pagina-estadisticas">
 
         <div class="panel">
+
           <h2>Estadísticas</h2>
           <p>Conocé tu productividad y el avance de tus tareas.</p>
 
@@ -244,6 +268,7 @@
           </div>
 
           <div class="progreso-panel">
+
             <h3>Progreso general</h3>
 
             <div class="progreso-barra">
@@ -251,6 +276,7 @@
             </div>
 
             <p id="texto-progreso">0% completado</p>
+
           </div>
 
         </div>
@@ -258,54 +284,66 @@
       </section>
 
 
-      
-<!-- PANTALLA CONFIGURACIÓN -->
+      <!-- PANTALLA CONFIGURACIÓN -->
 
-<section class="pagina" id="pagina-configuracion">
+      <section class="pagina" id="pagina-configuracion">
 
-  <div class="panel">
-    <h2>Configuración</h2>
-    <p>Personalizá tu experiencia en Mi Lista de Tareas.</p>
+        <div class="panel">
+
+          <h2>Configuración</h2>
+          <p>Personalizá tu experiencia en Mi Lista de Tareas.</p>
+
+        </div>
+
+        <div class="panel">
+
+          <h3>Mi perfil</h3>
+
+          <p>Correo electrónico de tu cuenta:</p>
+
+          <p id="perfil-email">Cargando correo...</p>
+
+          <p>Estado: Sesión iniciada</p>
+
+        </div>
+
+        <div class="panel">
+
+          <h3>Apariencia</h3>
+          <p>Elegí cómo querés visualizar la aplicación.</p>
+
+          <div class="opciones-tema">
+
+            <button type="button" id="tema-claro">
+              ☀️ Modo claro
+            </button>
+
+            <button type="button" id="tema-oscuro">
+              🌙 Modo oscuro
+            </button>
+
+          </div>
+
+          <p id="mensaje-tema">Tema actual: Claro</p>
+
+        </div>
+
+        <div class="panel">
+
+          <h3>Información</h3>
+          <p><strong>Aplicación:</strong> Mi Lista de Tareas</p>
+          <p><strong>Versión:</strong> 1.0</p>
+
+        </div>
+
+      </section>
+
+
+    </main>
+
   </div>
-<div class="panel">
-  <h3>Mi perfil</h3>
 
-  <p>Correo electrónico de tu cuenta:</p>
-
-  <p id="perfil-email">Cargando correo...</p>
-
-  <p>Estado: Sesión iniciada</p>
-</div> 
-  <div class="panel">
-    <h3>Apariencia</h3>
-    <p>Elegí cómo querés visualizar la aplicación.</p>
-
-    <div class="opciones-tema">
-      <button type="button" id="tema-claro">
-        ☀️ Modo claro
-      </button>
-
-      <button type="button" id="tema-oscuro">
-        🌙 Modo oscuro
-      </button>
-    </div>
-
-    <p id="mensaje-tema">Tema actual: Claro</p>
-  </div>
-
-  <div class="panel">
-    <h3>Información</h3>
-    <p><strong>Aplicación:</strong> Mi Lista de Tareas</p>
-    <p><strong>Versión:</strong> 1.0</p>
-  </div>
-
-</section>
-
-</main>
-
-</div>
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 
 </body>
 </html>

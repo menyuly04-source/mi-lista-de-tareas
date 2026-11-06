@@ -1,3 +1,4 @@
+
 const express = require("express");
 const router = express.Router();
 
@@ -30,7 +31,7 @@ router.get("/", async (req, res) => {
 // 2. CREAR UNA TAREA
 router.post("/", async (req, res) => {
   try {
-    const { title, description, priority } = req.body;
+    const { title, description, priority, due_date } = req.body;
 
     if (!title || !title.trim()) {
       return res.status(400).json({
@@ -44,6 +45,7 @@ router.post("/", async (req, res) => {
         title: title.trim(),
         description: description || null,
         priority: priority || "medium",
+        due_date: due_date || null,
         user_id: req.user.id
       })
       .select()
@@ -67,7 +69,7 @@ router.post("/", async (req, res) => {
 // 3. MODIFICAR UNA TAREA
 router.patch("/:id", async (req, res) => {
   try {
-    const { title, description, is_completed, priority } = req.body;
+    const { title, description, is_completed, priority, due_date } = req.body;
 
     const cambios = {};
 
@@ -75,6 +77,7 @@ router.patch("/:id", async (req, res) => {
     if (description !== undefined) cambios.description = description;
     if (is_completed !== undefined) cambios.is_completed = is_completed;
     if (priority !== undefined) cambios.priority = priority;
+    if (due_date !== undefined) cambios.due_date = due_date || null;
 
     if (Object.keys(cambios).length === 0) {
       return res.status(400).json({
@@ -144,4 +147,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

@@ -306,6 +306,16 @@ function mostrarTarea(todo) {
 
   prioridad.textContent = `Prioridad: ${prioridades[todo.priority] || todo.priority}`;
 
+  // FECHA LÍMITE
+  const fechaLimite = document.createElement("p");
+
+  if (todo.due_date) {
+    const partes = todo.due_date.split("-");
+    fechaLimite.textContent = `Fecha límite: ${partes[2]}/${partes[1]}/${partes[0]}`;
+  } else {
+    fechaLimite.textContent = "Sin fecha límite";
+  }
+
   const estado = document.createElement("p");
   estado.textContent = todo.is_completed ? "Completada" : "Pendiente";
 
@@ -322,24 +332,34 @@ function mostrarTarea(todo) {
   eliminar.textContent = "Eliminar";
   eliminar.style.background = "#e74c3c";
   eliminar.style.marginTop = "8px";
-  // BOTÓN EDITAR
-const editar = document.createElement("button");
-editar.textContent = "Editar";
-editar.style.marginTop = "8px";
-editar.style.background = "#3498db";
-
-editar.addEventListener("click", () => {
-  editarTarea(todo);
-}); 
 
   eliminar.addEventListener("click", () => {
     eliminarTarea(todo.id);
   });
 
- tarjeta.append(titulo, descripcion, prioridad, estado, completar , editar, eliminar);
-  taskList.appendChild(tarjeta);
-}
+  // BOTÓN EDITAR
+  const editar = document.createElement("button");
+  editar.textContent = "Editar";
+  editar.style.marginTop = "8px";
+  editar.style.background = "#3498db";
 
+  editar.addEventListener("click", () => {
+    editarTarea(todo);
+  });
+
+  tarjeta.append(
+    titulo,
+    descripcion,
+    prioridad,
+    fechaLimite,
+    estado,
+    completar,
+    editar,
+    eliminar
+  );
+
+  taskList.appendChild(tarjeta);
+} 
 
 // AGREGAR UNA TAREA
 
@@ -349,6 +369,7 @@ document.getElementById("task-form").addEventListener("submit", async (e) => {
   const title = document.getElementById("task-title").value.trim();
   const description = document.getElementById("task-description").value.trim();
   const priority = document.getElementById("task-priority").value;
+  const due_date = document.getElementById("task-due-date").value;
 
   try {
     const response = await fetch(`${API}/api/todos`, {
@@ -357,7 +378,7 @@ document.getElementById("task-form").addEventListener("submit", async (e) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ title, description, priority })
+      body: JSON.stringify({ title, description, priority, due_date })
     });
 
     const data = await response.json();
@@ -375,8 +396,6 @@ document.getElementById("task-form").addEventListener("submit", async (e) => {
     taskMessage.textContent = error.message;
   }
 });
-
-
 // EDITAR UNA TAREA
 
 async function editarTarea(todo) {
@@ -408,13 +427,25 @@ async function editarTarea(todo) {
     return;
   }
 
+  const nuevaFecha = prompt(
+    "Modificar fecha límite (AAAA-MM-DD). Dejá vacío si no querés una fecha:",
+    todo.due_date || ""
+  );
+
+  if (nuevaFecha === null) return;
+
+  if (nuevaFecha !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(nuevaFecha)) {
+    alert("La fecha debe tener el formato AAAA-MM-DD");
+    return;
+  }
+
   await actualizarTarea(todo.id, {
     title: nuevoTitulo.trim(),
     description: nuevaDescripcion,
-    priority: nuevaPrioridad
+    priority: nuevaPrioridad,
+    due_date: nuevaFecha || null
   });
-}
-
+} 
 // ACTUALIZAR UNA TAREA
 
 async function actualizarTarea(id, cambios) {
