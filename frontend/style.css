@@ -75,6 +75,7 @@ select {
   border-radius: 9px;
   outline: none;
   background: white;
+  color: #1e293b;
 }
 
 input:focus,
@@ -356,21 +357,24 @@ textarea {
 
 /* FILTROS */
 
-.filtros {
+.filtros,
+.filtros-tareas {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin: 20px 0;
 }
 
-.filtros button {
+.filtros button,
+.filtros-tareas button {
   background: #f1f4fa;
   color: #475569;
   padding: 10px 18px;
   border-radius: 8px;
 }
 
-.filtros button:hover {
+.filtros button:hover,
+.filtros-tareas button:hover {
   background: #e0e7ff;
   color: #3549c9;
 }
@@ -410,11 +414,230 @@ textarea {
 }
 
 
+/* ESTADÍSTICAS Y PROGRESO */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.stat-card {
+  background: #f8faff;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.stat-card span {
+  color: #64748b;
+}
+
+.stat-card h3 {
+  color: #172554;
+  font-size: 28px;
+  margin-top: 10px;
+}
+
+.progreso-panel {
+  margin-top: 25px;
+}
+
+.progreso-barra {
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+.progreso-relleno {
+  height: 100%;
+  width: 0;
+  background: #4355d6;
+  border-radius: 20px;
+  transition: width 0.3s;
+}
+
+
 /* MENSAJES */
 
 #task-message {
   color: #64748b;
   margin-top: 12px;
+}
+
+
+/* CONFIGURACIÓN DE APARIENCIA */
+
+.opciones-tema {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.opciones-tema button {
+  padding: 12px 22px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  background: #f3f4f6;
+  color: #1f2937;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.opciones-tema button:hover {
+  transform: translateY(-2px);
+  background: #e5e7eb;
+}
+
+
+/* MODO OSCURO */
+
+body.modo-oscuro {
+  background: #111827;
+  color: #e5e7eb;
+}
+
+/* Paneles */
+
+body.modo-oscuro .panel,
+body.modo-oscuro .tarjeta {
+  background: #1f2937;
+  color: #e5e7eb;
+  border-color: #374151;
+}
+
+body.modo-oscuro .panel h2,
+body.modo-oscuro .panel h3,
+body.modo-oscuro .panel p,
+body.modo-oscuro .tarjeta h2,
+body.modo-oscuro .tarjeta h3 {
+  color: #e5e7eb;
+}
+
+/* Encabezados */
+
+body.modo-oscuro .barra-superior {
+  border-color: #374151;
+}
+
+body.modo-oscuro .barra-superior h1,
+body.modo-oscuro .bienvenida h2 {
+  color: #f9fafb;
+}
+
+body.modo-oscuro .subtitulo,
+body.modo-oscuro .bienvenida p {
+  color: #9ca3af;
+}
+
+body.modo-oscuro .usuario {
+  color: #e5e7eb;
+}
+
+/* Campos de texto, descripción, prioridad y fecha */
+
+body.modo-oscuro input,
+body.modo-oscuro textarea,
+body.modo-oscuro select {
+  background: #111827;
+  color: #f9fafb;
+  border: 1px solid #4b5563;
+}
+
+body.modo-oscuro input::placeholder,
+body.modo-oscuro textarea::placeholder {
+  color: #9ca3af;
+}
+
+body.modo-oscuro input:focus,
+body.modo-oscuro textarea:focus,
+body.modo-oscuro select:focus {
+  border-color: #818cf8;
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.15);
+}
+
+body.modo-oscuro input[type="date"] {
+  color-scheme: dark;
+}
+
+/* Filtros */
+
+body.modo-oscuro .filtros button,
+body.modo-oscuro .filtros-tareas button {
+  background: #374151;
+  color: #e5e7eb;
+}
+
+body.modo-oscuro .filtros button:hover,
+body.modo-oscuro .filtros-tareas button:hover {
+  background: #4b5563;
+  color: white;
+}
+
+/* Tarjetas de tareas */
+
+body.modo-oscuro .tarea {
+  background: #111827;
+  border-color: #4b5563;
+  border-left-color: #818cf8;
+}
+
+body.modo-oscuro .tarea h3 {
+  color: #f9fafb;
+}
+
+body.modo-oscuro .tarea p {
+  color: #cbd5e1;
+}
+
+/* Resúmenes y estadísticas */
+
+body.modo-oscuro .resumen-card,
+body.modo-oscuro .stat-card {
+  background: #111827;
+  border-color: #374151;
+}
+
+body.modo-oscuro .resumen-card p,
+body.modo-oscuro .stat-card span {
+  color: #cbd5e1;
+}
+
+body.modo-oscuro .resumen-card h2,
+body.modo-oscuro .stat-card h3 {
+  color: #f9fafb;
+}
+
+body.modo-oscuro .resumen-card span {
+  color: #9ca3af;
+}
+
+body.modo-oscuro .progreso-barra {
+  background: #374151;
+}
+
+/* Botones de apariencia */
+
+body.modo-oscuro .opciones-tema button {
+  background: #374151;
+  color: #f9fafb;
+  border-color: #4b5563;
+}
+
+body.modo-oscuro .opciones-tema button:hover {
+  background: #4b5563;
+}
+
+/* Mensajes */
+
+body.modo-oscuro #task-message,
+body.modo-oscuro #auth-message {
+  color: #cbd5e1;
 }
 
 
@@ -492,58 +715,8 @@ textarea {
     padding: 18px;
   }
 
-}
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
 
-/* CONFIGURACIÓN DE APARIENCIA */
-
-.opciones-tema {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.opciones-tema button {
-  padding: 12px 22px;
-  border: 1px solid #d1d5db;
-  border-radius: 10px;
-  background: #f3f4f6;
-  color: #1f2937;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
-}
-
-.opciones-tema button:hover {
-  transform: translateY(-2px);
-  background: #e5e7eb;
-}
-
-/* MODO OSCURO */
-
-body.modo-oscuro {
-  background: #111827;
-  color: #f9fafb;
-}
-
-body.modo-oscuro .panel {
-  background: #1f2937;
-  color: #f9fafb;
-  border-color: #374151;
-}
-
-body.modo-oscuro .panel h2,
-body.modo-oscuro .panel h3,
-body.modo-oscuro .panel p {
-  color: #f9fafb;
-}
-
-body.modo-oscuro .opciones-tema button {
-  background: #374151;
-  color: #f9fafb;
-  border-color: #4b5563;
-}
-
-body.modo-oscuro .opciones-tema button:hover {
-  background: #4b5563;
 }

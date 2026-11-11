@@ -10,10 +10,12 @@ const registerForm = document.getElementById("register-form");
 const authMessage = document.getElementById("auth-message");
 const taskMessage = document.getElementById("task-message");
 const taskList = document.getElementById("task-list");
+const taskForm = document.getElementById("task-form");
 
 let token = sessionStorage.getItem("access_token");
 let filtroActual = "all";
-let todasLasTareas = []; 
+let todasLasTareas = [];
+let creandoTarea = false;
 
 // CAMBIAR ENTRE INICIO DE SESIÓN Y REGISTRO
 
@@ -30,7 +32,6 @@ document.getElementById("show-login").addEventListener("click", (e) => {
   loginForm.classList.remove("oculto");
   authMessage.textContent = "";
 });
-
 
 // REGISTRAR USUARIO
 
@@ -66,7 +67,6 @@ document.getElementById("register-button").addEventListener("click", async () =>
     authMessage.textContent = error.message;
   }
 });
-
 
 // INICIAR SESIÓN
 
@@ -109,7 +109,6 @@ async function iniciarSesion() {
   }
 }
 
-
 // MOSTRAR LA APLICACIÓN
 
 function mostrarAplicacion() {
@@ -125,22 +124,26 @@ function mostrarAplicacion() {
 
   cambiarPagina("inicio");
 }
+
 // CERRAR SESIÓN
 
 document.getElementById("logout-button").addEventListener("click", () => {
   sessionStorage.removeItem("access_token");
+  sessionStorage.removeItem("user_email");
   token = null;
 
   appSection.classList.add("oculto");
   authSection.classList.remove("oculto");
 
   taskList.replaceChildren();
+  todasLasTareas = [];
+  actualizarResumen();
+
   authMessage.textContent = "";
   taskMessage.textContent = "";
 });
 
-
- // MOSTRAR TAREAS SEGÚN EL FILTRO
+// MOSTRAR TAREAS SEGÚN EL FILTRO
 
 function mostrarTareasFiltradas() {
   taskList.replaceChildren();
@@ -170,7 +173,6 @@ function mostrarTareasFiltradas() {
     mostrarTarea(todo);
   });
 }
-
 
 // BOTONES DE FILTROS
 
@@ -207,25 +209,19 @@ async function cargarTareas() {
       throw new Error(data.message || "No se pudieron cargar las tareas");
     }
 
-    taskList.replaceChildren();
-todasLasTareas = data;
+    todasLasTareas = data;
 
-actualizarResumen();
-mostrarTareasFiltradas();  
+    actualizarResumen();
+    mostrarTareasFiltradas();
 
-   if (data.length === 0) {
-  taskMessage.textContent = "Todavía no tenés tareas. ¡Agregá la primera!";
-  return;
-}
-
-taskMessage.textContent = "";
-mostrarTareasFiltradas(); 
+    if (data.length === 0) {
+      taskMessage.textContent = "Todavía no tenés tareas. ¡Agregá la primera!";
+    }
 
   } catch (error) {
     taskMessage.textContent = error.message;
   }
 }
-
 
 // ACTUALIZAR RESUMEN DEL INICIO
 
@@ -240,17 +236,14 @@ function actualizarResumen() {
     tarea => tarea.is_completed
   ).length;
 
-  // Actualizar resumen del inicio
   document.getElementById("total-tareas").textContent = total;
   document.getElementById("total-pendientes").textContent = pendientes;
   document.getElementById("total-terminadas").textContent = terminadas;
 
-  // Actualizar estadísticas
   document.getElementById("estadistica-total").textContent = total;
   document.getElementById("estadistica-pendientes").textContent = pendientes;
   document.getElementById("estadistica-terminadas").textContent = terminadas;
 
-  // Calcular porcentaje de progreso
   const porcentaje = total === 0
     ? 0
     : Math.round((terminadas / total) * 100);
@@ -260,7 +253,6 @@ function actualizarResumen() {
   document.getElementById("texto-progreso").textContent =
     porcentaje + "% completado";
 
-  // Mostrar tareas recientes
   const recientes = document.getElementById("tareas-recientes");
 
   if (!recientes) return;
@@ -282,8 +274,8 @@ function actualizarResumen() {
 
     recientes.appendChild(elemento);
   });
-} 
- 
+}
+
 // MOSTRAR UNA TAREA
 
 function mostrarTarea(todo) {
@@ -296,22 +288,22 @@ function mostrarTarea(todo) {
   const descripcion = document.createElement("p");
   descripcion.textContent = todo.description || "Sin descripción";
 
-  const prioridad = document.createElement("p");
-
   const prioridades = {
     low: "Baja",
     medium: "Media",
     high: "Alta"
   };
 
-  prioridad.textContent = `Prioridad: ${prioridades[todo.priority] || todo.priority}`;
+  const prioridad = document.createElement("p");
+  prioridad.textContent =
+    `Prioridad: ${prioridades[todo.priority] || todo.priority}`;
 
-  // FECHA LÍMITE
   const fechaLimite = document.createElement("p");
 
   if (todo.due_date) {
     const partes = todo.due_date.split("-");
-    fechaLimite.textContent = `Fecha límite: ${partes[2]}/${partes[1]}/${partes[0]}`;
+    fechaLimite.textContent =
+      `Fecha límite: ${partes[2]}/${partes[1]}/${partes[0]}`;
   } else {
     fechaLimite.textContent = "Sin fecha límite";
   }
@@ -328,6 +320,15 @@ function mostrarTarea(todo) {
     });
   });
 
+  const editar = document.createElement("button");
+  editar.textContent = "Editar";
+  editar.style.marginTop = "8px";
+  editar.style.background = "#3498db";
+
+  editar.addEventListener("click", () => {
+    mostrarEditor(tarjeta, todo);
+  });
+
   const eliminar = document.createElement("button");
   eliminar.textContent = "Eliminar";
   eliminar.style.background = "#e74c3c";
@@ -335,16 +336,6 @@ function mostrarTarea(todo) {
 
   eliminar.addEventListener("click", () => {
     eliminarTarea(todo.id);
-  });
-
-  // BOTÓN EDITAR
-  const editar = document.createElement("button");
-  editar.textContent = "Editar";
-  editar.style.marginTop = "8px";
-  editar.style.background = "#3498db";
-
-  editar.addEventListener("click", () => {
-    editarTarea(todo);
   });
 
   tarjeta.append(
@@ -359,17 +350,145 @@ function mostrarTarea(todo) {
   );
 
   taskList.appendChild(tarjeta);
-} 
+}
 
-// AGREGAR UNA TAREA
+// EDITAR SOLAMENTE LOS CAMPOS QUE CAMBIEN
 
-document.getElementById("task-form").addEventListener("submit", async (e) => {
+function mostrarEditor(tarjeta, todo) {
+  if (tarjeta.querySelector(".editor-tarea")) return;
+
+  const editor = document.createElement("form");
+  editor.className = "editor-tarea";
+
+  const tituloLabel = document.createElement("label");
+  tituloLabel.textContent = "Título";
+
+  const tituloInput = document.createElement("input");
+  tituloInput.type = "text";
+  tituloInput.value = todo.title;
+  tituloInput.required = true;
+
+  const descripcionLabel = document.createElement("label");
+  descripcionLabel.textContent = "Descripción";
+
+  const descripcionInput = document.createElement("textarea");
+  descripcionInput.value = todo.description || "";
+
+  const prioridadLabel = document.createElement("label");
+  prioridadLabel.textContent = "Prioridad";
+
+  const prioridadSelect = document.createElement("select");
+
+  [
+    { value: "low", label: "Baja" },
+    { value: "medium", label: "Media" },
+    { value: "high", label: "Alta" }
+  ].forEach(opcion => {
+    const option = document.createElement("option");
+    option.value = opcion.value;
+    option.textContent = opcion.label;
+    prioridadSelect.appendChild(option);
+  });
+
+  prioridadSelect.value = todo.priority || "medium";
+
+  const fechaLabel = document.createElement("label");
+  fechaLabel.textContent = "Fecha límite";
+
+  const fechaInput = document.createElement("input");
+  fechaInput.type = "date";
+  fechaInput.value = todo.due_date || "";
+
+  const guardar = document.createElement("button");
+  guardar.type = "submit";
+  guardar.textContent = "Guardar cambios";
+
+  const cancelar = document.createElement("button");
+  cancelar.type = "button";
+  cancelar.textContent = "Cancelar";
+
+  cancelar.addEventListener("click", () => {
+    editor.remove();
+  });
+
+  editor.append(
+    tituloLabel,
+    tituloInput,
+    descripcionLabel,
+    descripcionInput,
+    prioridadLabel,
+    prioridadSelect,
+    fechaLabel,
+    fechaInput,
+    guardar,
+    cancelar
+  );
+
+  tarjeta.appendChild(editor);
+
+  editor.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const cambios = {};
+
+    if (tituloInput.value.trim() !== todo.title) {
+      cambios.title = tituloInput.value.trim();
+    }
+
+    if (descripcionInput.value !== (todo.description || "")) {
+      cambios.description = descripcionInput.value;
+    }
+
+    if (prioridadSelect.value !== todo.priority) {
+      cambios.priority = prioridadSelect.value;
+    }
+
+    if (fechaInput.value !== (todo.due_date || "")) {
+      cambios.due_date = fechaInput.value || null;
+    }
+
+    if (Object.keys(cambios).length === 0) {
+      editor.remove();
+      return;
+    }
+
+    if (!cambios.title && tituloInput.value.trim() === "") {
+      alert("El título no puede estar vacío.");
+      return;
+    }
+
+    guardar.disabled = true;
+    guardar.textContent = "Guardando...";
+
+    await actualizarTarea(todo.id, cambios);
+  });
+}
+
+// AGREGAR UNA TAREA SIN DUPLICAR CLICS
+
+taskForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  if (creandoTarea) return;
 
   const title = document.getElementById("task-title").value.trim();
   const description = document.getElementById("task-description").value.trim();
   const priority = document.getElementById("task-priority").value;
   const due_date = document.getElementById("task-due-date").value;
+
+  if (!title) {
+    taskMessage.textContent = "Escribí un título para la tarea.";
+    return;
+  }
+
+  creandoTarea = true;
+
+  const botonAgregar = taskForm.querySelector('button[type="submit"]');
+  const textoOriginal = botonAgregar.textContent;
+
+  botonAgregar.disabled = true;
+  botonAgregar.textContent = "Agregando...";
+  taskMessage.textContent = "Guardando tarea...";
 
   try {
     const response = await fetch(`${API}/api/todos`, {
@@ -387,65 +506,21 @@ document.getElementById("task-form").addEventListener("submit", async (e) => {
       throw new Error(data.message || "No se pudo crear la tarea");
     }
 
-    e.target.reset();
+    taskForm.reset();
     taskMessage.textContent = "Tarea agregada correctamente.";
 
     await cargarTareas();
 
   } catch (error) {
     taskMessage.textContent = error.message;
+
+  } finally {
+    creandoTarea = false;
+    botonAgregar.disabled = false;
+    botonAgregar.textContent = textoOriginal;
   }
 });
-// EDITAR UNA TAREA
 
-async function editarTarea(todo) {
-  const nuevoTitulo = prompt("Modificar título:", todo.title);
-
-  if (nuevoTitulo === null) return;
-
-  if (!nuevoTitulo.trim()) {
-    alert("El título no puede estar vacío");
-    return;
-  }
-
-  const nuevaDescripcion = prompt(
-    "Modificar descripción:",
-    todo.description || ""
-  );
-
-  if (nuevaDescripcion === null) return;
-
-  const nuevaPrioridad = prompt(
-    "Elegí la prioridad: low (baja), medium (media) o high (alta)",
-    todo.priority
-  );
-
-  if (nuevaPrioridad === null) return;
-
-  if (!["low", "medium", "high"].includes(nuevaPrioridad)) {
-    alert("La prioridad debe ser low, medium o high");
-    return;
-  }
-
-  const nuevaFecha = prompt(
-    "Modificar fecha límite (AAAA-MM-DD). Dejá vacío si no querés una fecha:",
-    todo.due_date || ""
-  );
-
-  if (nuevaFecha === null) return;
-
-  if (nuevaFecha !== "" && !/^\d{4}-\d{2}-\d{2}$/.test(nuevaFecha)) {
-    alert("La fecha debe tener el formato AAAA-MM-DD");
-    return;
-  }
-
-  await actualizarTarea(todo.id, {
-    title: nuevoTitulo.trim(),
-    description: nuevaDescripcion,
-    priority: nuevaPrioridad,
-    due_date: nuevaFecha || null
-  });
-} 
 // ACTUALIZAR UNA TAREA
 
 async function actualizarTarea(id, cambios) {
@@ -473,10 +548,88 @@ async function actualizarTarea(id, cambios) {
 }
 
 
+ // VENTANA PERSONALIZADA PARA CONFIRMAR LA ELIMINACIÓN
+
+function mostrarConfirmacionEliminar(tarea) {
+  return new Promise((resolve) => {
+    const oscuro = document.body.classList.contains("modo-oscuro");
+
+    const fondo = document.createElement("div");
+    fondo.style.cssText = `
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      padding: 20px;
+    `;
+
+    const ventana = document.createElement("div");
+    ventana.style.cssText = `
+      width: 100%;
+      max-width: 340px;
+      padding: 24px;
+      border-radius: 14px;
+      background: ${oscuro ? "#1e293b" : "#ffffff"};
+      color: ${oscuro ? "#f1f5f9" : "#1f2937"};
+      box-shadow: 0 10px 35px rgba(0,0,0,0.3);
+    `;
+
+    const titulo = document.createElement("h3");
+    titulo.textContent = "Eliminar tarea";
+
+    const mensaje = document.createElement("p");
+    mensaje.textContent = `¿Estás seguro de que querés eliminar "${tarea.title}"?`;
+
+    const botones = document.createElement("div");
+    botones.style.cssText = `
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 22px;
+    `;
+
+    const cancelar = document.createElement("button");
+    cancelar.type = "button";
+    cancelar.textContent = "Cancelar";
+    cancelar.style.background = oscuro ? "#475569" : "#e5e7eb";
+    cancelar.style.color = oscuro ? "#ffffff" : "#1f2937";
+
+    const eliminar = document.createElement("button");
+    eliminar.type = "button";
+    eliminar.textContent = "Eliminar";
+    eliminar.style.background = "#dc3545";
+    eliminar.style.color = "#ffffff";
+
+    function cerrar(resultado) {
+      fondo.remove();
+      resolve(resultado);
+    }
+
+    cancelar.addEventListener("click", () => cerrar(false));
+    eliminar.addEventListener("click", () => cerrar(true));
+
+    fondo.addEventListener("click", (e) => {
+      if (e.target === fondo) cerrar(false);
+    });
+
+    botones.append(cancelar, eliminar);
+    ventana.append(titulo, mensaje, botones);
+    fondo.appendChild(ventana);
+    document.body.appendChild(fondo);
+  });
+}
+
 // ELIMINAR UNA TAREA
 
 async function eliminarTarea(id) {
-  const confirmar = confirm("¿Seguro que querés eliminar esta tarea?");
+  const tarea = todasLasTareas.find(todo => todo.id === id);
+
+  if (!tarea) return;
+
+  const confirmar = await mostrarConfirmacionEliminar(tarea);
 
   if (!confirmar) return;
 
@@ -501,7 +654,6 @@ async function eliminarTarea(id) {
   }
 }
 
-
 // RECUPERAR SESIÓN SI LA PÁGINA SE RECARGA
 
 if (token) {
@@ -512,25 +664,20 @@ if (token) {
 // NAVEGACIÓN ENTRE PANTALLAS
 
 function cambiarPagina(nombre) {
-
-  // Ocultar todas las pantallas
   document.querySelectorAll(".pagina").forEach((pagina) => {
     pagina.classList.remove("activa");
   });
 
-  // Quitar selección de todos los botones
   document.querySelectorAll(".menu-link[data-page]").forEach((boton) => {
     boton.classList.remove("activo");
   });
 
-  // Mostrar la pantalla seleccionada
   const paginaSeleccionada = document.getElementById(`pagina-${nombre}`);
 
   if (!paginaSeleccionada) return;
 
   paginaSeleccionada.classList.add("activa");
 
-  // Marcar el botón seleccionado
   const botonSeleccionado = document.querySelector(
     `.menu-link[data-page="${nombre}"]`
   );
@@ -539,12 +686,11 @@ function cambiarPagina(nombre) {
     botonSeleccionado.classList.add("activo");
   }
 
-  // Cambiar el título superior
   const titulos = {
     inicio: "Inicio",
     tareas: "Mis tareas",
     estadisticas: "Estadísticas",
-    configuracion: "Configuración"
+    configuracion: "Perfil"
   };
 
   const titulo = document.getElementById("titulo-pagina");
@@ -552,19 +698,14 @@ function cambiarPagina(nombre) {
   if (titulo && titulos[nombre]) {
     titulo.textContent = titulos[nombre];
   }
-
-} // ESTA LLAVE CIERRA cambiarPagina
-
+}
 
 // ESCUCHAR LOS BOTONES DEL MENÚ
 
 document.querySelectorAll(".menu-link[data-page]").forEach((boton) => {
-
   boton.addEventListener("click", () => {
-    const pagina = boton.dataset.page;
-    cambiarPagina(pagina);
+    cambiarPagina(boton.dataset.page);
   });
-
 });
 
 // CONFIGURACIÓN DE APARIENCIA
@@ -594,6 +735,5 @@ if (botonTemaClaro && botonTemaOscuro) {
   });
 }
 
-// Recuperar el tema guardado
 const temaGuardado = localStorage.getItem("tema") || "claro";
 cambiarTema(temaGuardado);
